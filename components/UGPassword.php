@@ -12,21 +12,23 @@
  * Salt is available for backward compatibility (and shall be deprecated).
  * @author Emanuele Cesena
  */
+require('password_compat/lib/password.php');
+
 class UGPassword {
 
 	public static function password_hash($password, $salt = null)
 	{
-		return md5($password . $salt);
+		return password_hash($password, PASSWORD_DEFAULT);
 	}
 
 	public static function password_verify($password, $hash, $salt = null)
 	{
-		return $hash === md5($password . $salt);
+		return password_verify($password, $hash);
 	}
 
 	public static function password_needs_rehash($hash)
 	{
-		return false;
+		return password_needs_rehash($hash, PASSWORD_DEFAULT);
 	}
 
 }

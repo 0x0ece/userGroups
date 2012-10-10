@@ -1,0 +1,3 @@
+[submodule "components/password_compat"]
+	path = components/password_compat
+	url = git://github.com/ircmaxell/password_compat.git
