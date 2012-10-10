@@ -170,6 +170,13 @@ class InstallController extends Controller
 		if (!$configuration_model->save())
 			throw new CHttpException (500, Yii::t('userGroupsModule.install', 'Setting not installed. Installation abort.'));
 		$configuration_model = new UserGroupsConfiguration('installation');
+		$configuration_model->rule = 'login_with_email';
+		$configuration_model->value = 'FALSE';
+		$configuration_model->options = 'BOOL';
+		$configuration_model->description = 'allow user to also sign in with his email';
+		if (!$configuration_model->save())
+			throw new CHttpException (500, Yii::t('userGroupsModule.install', 'Setting not installed. Installation abort.'));
+		$configuration_model = new UserGroupsConfiguration('installation');
 		$configuration_model->rule = 'public_user_list';
 		$configuration_model->value = 'FALSE';
 		$configuration_model->options = 'BOOL';

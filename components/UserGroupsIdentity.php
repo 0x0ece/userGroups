@@ -63,7 +63,10 @@ class UserGroupsIdentity extends CUserIdentity
 	 */
 	public function authenticate()
 	{
-		$model=UserGroupsUser::model()->findByAttributes(array('username' => $this->username));
+		$usernameAttr = 'username';
+		if (UserGroupsConfiguration::findRule('login_with_email') && strpos($this->username, '@')!==false)
+			$usernameAttr = 'email';
+		$model=UserGroupsUser::model()->findByAttributes(array($usernameAttr => $this->username));
 
 		if(!count($model))
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
