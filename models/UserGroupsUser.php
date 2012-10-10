@@ -267,7 +267,7 @@ class UserGroupsUser extends CActiveRecord
 			return true;
 		// load the user model and check if the old password match
 		$user = self::model()->findByPk($this->id);
-		if ($user->password !== md5($this->old_password.$user->getSalt()))
+		if (!UGPassword::password_verify($this->old_password, $user->password, $user->getSalt()))
 			$this->addError('old_password', Yii::t('userGroupsModule.general','You didn\'t enter the correct password'));
 	}
 
@@ -393,7 +393,7 @@ class UserGroupsUser extends CActiveRecord
 					$this->status = self::ACTIVE;
 			// if it's a new record generates a new password if a password was defined
 			if (($this->isNewRecord || $this->scenario === 'recovery' || $this->scenario === 'changePassword') && !empty($this->password)) {
-				$this->password = md5($this->password . $this->getSalt());
+				$this->password = UGPassword::password_hash($this->password, $this->getSalt());
 			}
 			// in the passRequest scenario change the status and delete the old password
 			if ($this->scenario === 'passRequest') {
