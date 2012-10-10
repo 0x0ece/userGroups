@@ -101,6 +101,10 @@ class UserGroupsIdentity extends CUserIdentity
 				}
 				UGCron::run();
 			}
+			// check if password needs to be rehashed
+			if (UGPassword::password_needs_rehash($model->password)) {
+			    $model->password = UGPassword::password_hash($this->password, $model->getSalt());
+			}
 			$model->save();
 		}
 		return !$this->errorCode;

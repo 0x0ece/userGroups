@@ -24,4 +24,9 @@ class UGPassword {
 		return $hash === md5($password . $salt);
 	}
 
+	public static function password_needs_rehash($hash)
+	{
+		return false;
+	}
+
 }
