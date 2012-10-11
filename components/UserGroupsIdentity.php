@@ -61,7 +61,7 @@ class UserGroupsIdentity extends CUserIdentity
 	 * Authenticates a user.
 	 * @return boolean whether authentication succeeds.
 	 */
-	public function authenticate()
+	public function authenticate($auto = false)
 	{
 		$usernameAttr = 'username';
 		if (UserGroupsConfiguration::findRule('login_with_email') && strpos($this->username, '@')!==false)
@@ -72,7 +72,9 @@ class UserGroupsIdentity extends CUserIdentity
 			$this->errorCode=self::ERROR_USERNAME_INVALID;
 		else if((int)$model->status === UserGroupsUser::WAITING_ACTIVATION)
 			$this->errorCode=self::ERROR_USER_INACTIVE;
-		else if(!UGPassword::password_verify($this->password, $model->password, $model->getSalt()))
+		else if(!$auto && !UGPassword::password_verify($this->password, $model->password, $model->getSalt()))
+			$this->errorCode=self::ERROR_PASSWORD_INVALID;
+		else if($auto && $model->password!==$this->password)
 			$this->errorCode=self::ERROR_PASSWORD_INVALID;
 		else if((int)$model->status === UserGroupsUser::WAITING_APPROVAL)
 			$this->errorCode=self::ERROR_USER_APPROVAL;

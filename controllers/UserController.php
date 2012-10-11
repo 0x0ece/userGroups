@@ -207,6 +207,11 @@ class UserController extends Controller
 						$p['model']->ug_id = $model->id;
 						$p['model']->save();
 					}
+					if (UserGroupsConfiguration::findRule('registration_auto_login') === true)
+					{
+						$model->login('auto');
+						$this->redirect(Yii::app()->user->returnUrl);
+					}
 					$this->redirect(Yii::app()->baseUrl . '/userGroups');
 				}
 			}
@@ -470,8 +475,17 @@ class UserController extends Controller
 		if ($noFormCondition) {
 			$model->scenario = 'swift_recovery';
 			if (!$model->save())
+			{
 				Yii::app()->user->setFlash('success', Yii::t('userGroupsModule.general','An Error Occurred. Please try later.'));
-			$this->redirect(Yii::app()->baseUrl . '/userGroups/user/logout');
+				$this->redirect(Yii::app()->baseUrl . '/userGroups/user/logout');
+			}
+			if (UserGroupsConfiguration::findRule('registration_auto_login') === true)
+			{
+				$model->login('auto');
+				$this->redirect(Yii::app()->user->returnUrl);
+			}
+			else
+				$this->redirect(Yii::app()->baseUrl . '/userGroups/user/logout');
 		}
 
 		// empty the password field

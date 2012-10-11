@@ -506,6 +506,9 @@ class UserGroupsUser extends CActiveRecord
 			} else if ($mode === 'recovery') {
 				$this->_identity=new UserGroupsIdentity($this->username,$this->activation_code);
 				$this->_identity->recovery();
+			} else if ($mode === 'auto') {
+				$this->_identity=new UserGroupsIdentity($this->username,$this->password);
+				$this->_identity->authenticate(true);
 			}
 		}
 		if($this->_identity->errorCode===UserGroupsIdentity::ERROR_NONE)
