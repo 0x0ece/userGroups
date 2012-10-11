@@ -25,11 +25,13 @@ $this->breadcrumbs=array(
 			<?php echo $form->passwordField($model,'password'); ?>
 			<?php echo $form->error($model,'password'); ?>
 		</div>
+		<?php if (UserGroupsConfiguration::findRule('rregistration_password_confirm') === true): ?>
 		<div class="row">
 			<?php echo $form->labelEx($model,'password_confirm'); ?>
 			<?php echo $form->passwordField($model,'password_confirm'); ?>
 			<?php echo $form->error($model,'password_confirm'); ?>
 		</div>
+		<?php endif; ?>
 
 		<?php
 		// additional fields of additional profiles supporting registration
@@ -49,6 +51,7 @@ $this->breadcrumbs=array(
 			<?php echo $form->error($model,'answer'); ?>
 		</div>
 		<?php endif; ?>
+		<?php if (UserGroupsConfiguration::findRule('registration_captcha') === true): ?>
 		<div class="row">
 			<?php echo $form->labelEx($model,'captcha'); ?>
 			<div>
@@ -63,6 +66,7 @@ $this->breadcrumbs=array(
 			</div>
 			<div class="hint"><?php echo Yii::t('userGroupsModule.general', 'Please enter the letters as they are shown in the image above.<br/>Letters are not case-sensitive.')?></div>
 		</div>
+		<?php endif; ?>
 		<div class="row buttons">
 			<?php echo CHtml::submitButton(Yii::t('userGroupsModule.general','Register')); ?>
 		</div>

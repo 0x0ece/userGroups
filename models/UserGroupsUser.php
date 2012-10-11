@@ -131,15 +131,19 @@ class UserGroupsUser extends CActiveRecord
 	{
 		// load validation rules folder
 		Yii::import('userGroups.validation.*');
+
+		// scenarios for the password_confirm
+		// registration is added depeding on the configuration parameter
+		$passwordConfirmScenarios = array('recovery', 'changePassword');
+		if (UserGroupsConfiguration::findRule('registration_password_confirm') === true)
+			$passwordConfirmScenarios[] = 'registration';
+
 		// rules
 		$rules = array(
 			array('group_id', 'length', 'max'=>20),
 			array('username, password, home', 'length', 'max'=>120),
 			array('email', 'email'),
 			array('rememberMe', 'safe'),
-			// rules for registration
-			array('captcha', 'required', 'on' => 'registration'),
-			array('captcha', 'captcha', 'on' => 'registration'),
 			// rules for activation
 			array('username, activation_code','required','on'=>'activate'),
 			array('activation_code','checkCode','on'=>'activate'),
@@ -163,8 +167,8 @@ class UserGroupsUser extends CActiveRecord
 				'message' => Yii::t('userGroupsModule.general','username must be at least 4 characters and can only be alphanumeric')),
 			array('password', 'required', 'on'=>array('recovery','changePassword')),
 			array('password', 'passwordStrength', 'on'=>array('registration','admin','recovery','changePassword')),
-			array('password_confirm', 'required', 'on'=>array('registration', 'recovery','changePassword')),
-			array('password_confirm', 'compare', 'compareAttribute' => 'password','on'=>array('changePassword','recovery', 'registration'),
+			array('password_confirm', 'required', 'on'=>$passwordConfirmScenarios),
+			array('password_confirm', 'compare', 'compareAttribute' => 'password','on'=>$passwordConfirmScenarios,
 				'message' => Yii::t('userGroupsModule.general', 'the confirmation password doesn\'t match the password')),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
@@ -173,6 +177,12 @@ class UserGroupsUser extends CActiveRecord
 
 		if (UserGroupsConfiguration::findRule('simple_password_reset') === false)
 			array_push($rules, array('question, answer', 'required', 'on'=>array('recovery', 'registration', 'changePassword')));
+
+		if (UserGroupsConfiguration::findRule('registration_captcha') === true)
+		{		
+			array_push($rules, array('captcha', 'required', 'on' => 'registration'));
+			array_push($rules, array('captcha', 'captcha', 'on' => 'registration'));
+		}
 
 		return $rules;
 	}
