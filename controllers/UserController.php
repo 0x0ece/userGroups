@@ -461,9 +461,13 @@ class UserController extends Controller
 	{
 		$model = $this->loadModel(Yii::app()->user->id, 'recovery');
 
-		// if user and password are already setted and so question and answer no form will be prompted
-		if (strpos($model->username, '_user') !== 0 && $model->password
-			&& $model->salt && $model->question && $model->answer) {
+		// no form will be prompted after registration, i.e.: 
+		// - if user and password are already set 
+		// - and so are question and answer (only when required)
+		$noFormCondition = (strpos($model->username, '_user') !== 0 && $model->password);
+		if (UserGroupsConfiguration::findRule('simple_password_reset') === false)
+			$noFormCondition = ($noFormCondition && $model->question && $model->answer);
+		if ($noFormCondition) {
 			$model->scenario = 'swift_recovery';
 			if (!$model->save())
 				Yii::app()->user->setFlash('success', Yii::t('userGroupsModule.general','An Error Occurred. Please try later.'));
