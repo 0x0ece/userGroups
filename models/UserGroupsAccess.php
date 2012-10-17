@@ -191,7 +191,7 @@ class UserGroupsAccess extends CActiveRecord
 				// add the controller class to the alreadyIncluded array
 				self::$_alreadyIncluded[] = $controller_class;
 				if (!in_array($controller_class, self::$_declaredClasses))
-					include($controller);
+					include_once($controller);
 				
 				$class = new ReflectionClass($controller_class);
 				if ($class->hasProperty('_permissionControl'))
